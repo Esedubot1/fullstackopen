@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
+import dataService from './services/persons'
 
 const FilterForm = (props) => {
   console.log(props)
@@ -12,7 +14,16 @@ const FilterForm = (props) => {
 const Person = (props) => {
   console.log(props)
   return (
-    <p>{props.name} {props.number}</p>
+    <div>
+      {props.person.name} {props.person.number}
+      <input type='button' value='delete' onClick={() => {
+        console.log(props.person.id)
+        axios.delete(`http://localhost:3001/persons/${props.person.id}`).then(response => {
+          console.log(response)
+          window.location.reload()
+        })
+      }}/>
+    </div>
   )
 }
 
@@ -21,22 +32,26 @@ const People = (props) => {
   return (
     <div>
       {props.list.filter(person => person.name.toLowerCase().includes(props.filter.toLowerCase())).map(person =>
-        <Person key={person.name} name={person.name} number={person.number}/>
+        <Person key={person.name} person={person}/>
       )}
     </div>
   )
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [persons, setPersons] = useState([])
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  useEffect(() => {
+    console.log('effect')
+    dataService.getAll().then(response => {
+      console.log('promise fulfilled')
+      setPersons(response.data)
+      console.log(persons)
+    })
+  }, [])
 
   const addPerson = (e) => {
     e.preventDefault()
@@ -54,10 +69,14 @@ const App = () => {
       number: newNumber
     }
 
-    setPersons(persons.concat(person))
-    setNewName('')
-    setNewNumber('')
+    dataService.create(person).then(response => {
+      console.log(response)
+      setPersons(persons.concat(response.data))
+      setNewName('')
+      setNewNumber('')
+    })
   }
+
 
   const handleFilterChange = (e) => {
     setFilter(e.target.value)
