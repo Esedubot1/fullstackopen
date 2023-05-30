@@ -38,11 +38,22 @@ const People = (props) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <p>{message}</p>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -60,7 +71,9 @@ const App = () => {
       return p.name
     })
     if(names.includes(newName)) {
-      alert(`${newName} is already added to phonebook`)
+      document.querySelector('.notification').style = 'color: red'
+      setNotification(`${newName} is already added`)
+      setTimeout(() => {setNotification(null)}, 5000)
       return
     }
 
@@ -71,6 +84,11 @@ const App = () => {
 
     dataService.create(person).then(response => {
       console.log(response)
+
+      document.querySelector('.notification').style = 'color: green'
+      setNotification(`${person.name} was added to the server`)
+      setTimeout(() => {setNotification(null)}, 5000)
+
       setPersons(persons.concat(response.data))
       setNewName('')
       setNewNumber('')
@@ -91,6 +109,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <div className='notification'>
+        <Notification message={notification}/>
+      </div>
       <FilterForm handleFilterChange={handleFilterChange}/>
       <h2>Add a new</h2>
       <form onSubmit={addPerson}>
