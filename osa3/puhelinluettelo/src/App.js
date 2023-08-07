@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import dataService from './services/persons'
 
 const FilterForm = (props) => {
@@ -82,17 +81,25 @@ const App = () => {
       number: newNumber
     }
 
-    dataService.create(person).then(response => {
-      console.log(response)
+    dataService.create(person)
+      .then(response => {
+        console.log(response)
 
-      document.querySelector('.notification').style = 'color: green'
-      setNotification(`${person.name} was added to the server`)
-      setTimeout(() => {setNotification(null)}, 5000)
+        document.querySelector('.notification').style = 'color: green'
+        setNotification(`${person.name} was added to the server`)
+        setTimeout(() => {setNotification(null)}, 5000)
 
-      setPersons(persons.concat(response.data))
-      setNewName('')
-      setNewNumber('')
-    })
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch((error) => {
+        console.log('error', error.message)
+
+        document.querySelector('.notification').style = 'color: red'
+        setNotification(`${error.response.data.error}`)
+        setTimeout(() => {setNotification(null)}, 5000)
+      })
   }
 
 
