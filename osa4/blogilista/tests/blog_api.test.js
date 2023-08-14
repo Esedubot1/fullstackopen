@@ -103,6 +103,16 @@ test('can post', async () => {
   )
 })
 
+test('can delete', async () => {
+  await api
+    .delete('/api/blogs/5a422bc61b54a676234d17fc')
+    .expect(204)
+
+  const response = await api.get('/api/blogs')
+
+  expect(response.body).toHaveLength(initialBlogs.length - 1)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
