@@ -61,6 +61,7 @@ const App = () => {
   const addBlog = async newBlog => {
     try {
       const blog = await blogService.create(newBlog)  
+      setBlogs(blogs.concat(blog))
 
       setNotification(`added blog ${blog.title} by ${blog.author}`)
       setTimeout(() => {
@@ -70,6 +71,40 @@ const App = () => {
       console.log(exception)
     }
     console.log('adding blog', newBlog.title, newBlog.author)
+  }
+
+  const handleLike = async (id, likedBlog) => {
+    try {
+      likedBlog.likes += 1
+      console.log('new blog:' + likedBlog)
+      await blogService.update(likedBlog.id, likedBlog)
+
+
+      setNotification(`edited blog ${likedBlog.title} by ${likedBlog.author}`)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    } catch (exception) {
+      console.log(exception)
+    }
+    console.log('liked blog', likedBlog.title, likedBlog.author)
+  }
+
+  const handleRemove = async blog => {
+    if(window.confirm(`Delete blog ${blog.title}?`)) {
+      try {
+        await blogService.remove(blog.id)
+        blogs.splice(blogs.indexOf(blog), 1)
+  
+        setNotification(`removed blog ${blog.title} by ${blog.author}`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
+      } catch (exception) {
+        console.log(exception)
+      }
+      console.log('removed blog', blog.title, blog.author)
+    }
   }
   
   const loginForm = () => (
@@ -117,8 +152,8 @@ const App = () => {
   const blogList = () => (
     <div>
       <h2>List</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a, b) => (a.likes < b.likes)).map(blog =>
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleRemove={handleRemove}/>
       )}
     </div> 
   )
@@ -131,8 +166,7 @@ const App = () => {
 
       {!user && loginForm()}
       {user && <div>
-        Logged in as {user.name}
-        <button onClick={handleLogout}>logout</button>
+        <p>Logged in as {user.name} <button onClick={handleLogout}>logout</button></p>
         {user && blogForm()}
         {user && blogList()}
         </div>
