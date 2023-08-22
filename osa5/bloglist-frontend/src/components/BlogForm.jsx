@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import React from 'react'
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const BlogForm = ({ newBlog }) => {
