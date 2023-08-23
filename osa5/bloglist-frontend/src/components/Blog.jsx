@@ -14,7 +14,7 @@ const Blog = ({ blog, handleLike, handleRemove }) => {
 
   const toggleVisible = () => {
     setBlogVisible(!blogVisible)
-    if (blog.user.username == loggedUser.username) {
+    if (loggedUser && blog.user.username == loggedUser.username) {
       setRemoveVisible(true)
     } else {
       setRemoveVisible(false)
@@ -22,11 +22,11 @@ const Blog = ({ blog, handleLike, handleRemove }) => {
   }
   
   return (
-    <div>
-      {blog.title} by {blog.author} <button style={hideWhenVisible} onClick={() => toggleVisible()}>view</button> <button style={showWhenVisible} onClick={() => toggleVisible()}>hide</button>
-      <div style={showWhenVisible}>
+    <div className='blog'>
+      <p>{blog.title} by {blog.author} <button style={hideWhenVisible} className='viewButton' onClick={() => toggleVisible()}>view</button> <button style={showWhenVisible} onClick={() => toggleVisible()}>hide</button></p>
+      <div style={showWhenVisible} className='togglable'>
         <p>{blog.url}</p>
-        <p>Likes: {blog.likes} <button onClick={() => handleLike(blog.id, blog)}>like</button></p>
+        <p>Likes: {blog.likes} <button className='likeButton' onClick={() => handleLike(blog.id, blog)}>like</button></p>
         <p>{blog.user.name}</p>
         <button style={showIfOwner} onClick={() => handleRemove(blog)}>remove</button>
       </div>
@@ -38,7 +38,6 @@ Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   handleLike: PropTypes.func.isRequired,
   handleRemove: PropTypes.func.isRequired,
-
 }
 
 export default Blog
