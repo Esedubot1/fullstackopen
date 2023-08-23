@@ -42,6 +42,10 @@ const App = () => {
       setPassword('')   
     } catch (exception) {
       console.log(exception)
+      setNotification('Wrong credentials')
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     }
     console.log('logging in with', username, password)
   }
@@ -61,7 +65,8 @@ const App = () => {
 
   const addBlog = async newBlog => {
     try {
-      const blog = await blogService.create(newBlog)  
+      const blog = await blogService.create(newBlog)
+      blog.user = user
       setBlogs(blogs.concat(blog))
 
       setNotification(`added blog ${blog.title} by ${blog.author}`)
@@ -111,12 +116,12 @@ const App = () => {
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
-        username<input type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)}/>
+        <p>username<input id="usernameInput" type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)}/></p>
       </div>
       <div>
-        password <input type="password" value={password} name="Password" onChange={({ target }) => setPassword(target.value)}/>        
+        <p>password <input id="passwordInput" type="password" value={password} name="Password" onChange={({ target }) => setPassword(target.value)}/></p>
       </div>        
-      <button type="submit">login</button>
+      <button type="submit" id="loginButton">login</button>
     </form>      
   )
 
@@ -127,11 +132,11 @@ const App = () => {
     return (
       <div>
         <div style={hideWhenVisible}>
-          <button onClick={() => setFormVisible(true)}>new blog</button>
+          <button id="newBlogButton" onClick={() => setFormVisible(true)}>new blog</button>
         </div>
         <div style={showWhenVisible}>
           <BlogForm newBlog={addBlog}/>
-          <button onClick={() => setFormVisible(false)}>cancel</button>
+          <button id="cancelButton" onClick={() => setFormVisible(false)}>cancel</button>
         </div>
       </div>
     )
@@ -155,7 +160,7 @@ const App = () => {
 
       {!user && loginForm()}
       {user && <div>
-        <p>Logged in as {user.name} <button onClick={handleLogout}>logout</button></p>
+        <p id="loggedInAs">Logged in as {user.name} <button onClick={handleLogout}>logout</button></p>
         {user && blogForm()}
         {user && blogList()}
       </div>

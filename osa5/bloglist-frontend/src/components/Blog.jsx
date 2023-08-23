@@ -26,9 +26,9 @@ const Blog = ({ blog, handleLike, handleRemove }) => {
       <p>{blog.title} by {blog.author} <button style={hideWhenVisible} className='viewButton' onClick={() => toggleVisible()}>view</button> <button style={showWhenVisible} onClick={() => toggleVisible()}>hide</button></p>
       <div style={showWhenVisible} className='togglable'>
         <p>{blog.url}</p>
-        <p>Likes: {blog.likes} <button className='likeButton' onClick={() => handleLike(blog.id, blog)}>like</button></p>
+        <p id="likeCount">Likes: {blog.likes} <button className='likeButton' onClick={() => handleLike(blog.id, blog)}>like</button></p>
         <p>{blog.user.name}</p>
-        <button style={showIfOwner} onClick={() => handleRemove(blog)}>remove</button>
+        <button id="removeButton" style={showIfOwner} onClick={() => handleRemove(blog)}>remove</button>
       </div>
     </div>
   )
