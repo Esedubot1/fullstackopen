@@ -160,7 +160,7 @@ const App = () => {
 
       {!user && loginForm()}
       {user && <div>
-        <p id="loggedInAs">Logged in as {user.name} <button onClick={handleLogout}>logout</button></p>
+        <p id="loggedInAs">Logged in as {user.name} <button id="logoutButton" onClick={handleLogout}>logout</button></p>
         {user && blogForm()}
         {user && blogList()}
       </div>
